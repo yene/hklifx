@@ -79,7 +79,11 @@ func Connect() {
 
 func NewDevice(device common.Device) {
 	if light, ok := device.(common.Light); ok {
-		hkLight := GetHKLight(light)
+		hkLight, found := lights[light.ID()]
+		if !found {
+			hkLight = NewHKLight(light)
+			lights[light.ID()] = hkLight
+		}
 
 		hkLight.sub, _ = light.NewSubscription()
 		for {
@@ -125,13 +129,14 @@ func ExpireDevice(device common.Device) {
 	}
 }
 
-func GetHKLight(light common.Light) *HKLight {
-	hkLight, found := lights[light.ID()]
-	if found {
-		return hkLight
+func NewHKLight(light common.Light) *HKLight {
+	label, _ := light.GetLabel()
+
+	if label == "" {
+		log.Info.Println("Original LFIX Bulb without name found, please claim inside the offical app.")
+		label = "LFIX Bulb"
 	}
 
-	label, _ := light.GetLabel()
 	log.Debug.Printf("Creating New HKLight for %s", label)
 
 	info := accessory.Info{
@@ -160,9 +165,6 @@ func GetHKLight(light common.Light) *HKLight {
 	go func() {
 		transport.Start()
 	}()
-
-	hkLight = &HKLight{acc, transport, nil}
-	lights[light.ID()] = hkLight
 
 	acc.OnIdentify(func() {
 		timeout := 1 * time.Second
@@ -233,7 +235,7 @@ func GetHKLight(light common.Light) *HKLight {
 		updateColor(light)
 	})
 
-	return hkLight
+	return &HKLight{acc, transport, nil}
 }
 
 func Round(f float64) float64 {
@@ -257,7 +259,7 @@ func ToggleLight(light common.Light) {
 func main() {
 	lights = map[uint64]*HKLight{}
 
-	pinArg := flag.String("pin", "", "PIN used to pair the LIFX bulbs with HomeKit")
+	pinArg := flag.String("pin", "001002003", "PIN used to pair the LIFX bulbs with HomeKit")
 	verboseArg := flag.Bool("v", false, "Whether or not log output is displayed")
 	transitionArg := flag.Float64("transition-duration", 1, "Transition time in seconds")
 
