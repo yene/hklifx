@@ -132,6 +132,7 @@ func ExpireDevice(device common.Device) {
 func NewHKLight(light common.Light) *HKLight {
 	label, _ := light.GetLabel()
 
+	// Note: You can only reproduce with factory fresh original LFIX Bulb
 	if label == "" {
 		log.Info.Println("Original LFIX Bulb without name found, please claim inside the offical app.")
 		label = "LFIX Bulb"
