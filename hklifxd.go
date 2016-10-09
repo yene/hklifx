@@ -98,7 +98,8 @@ func NewDevice(device common.Device) {
 				log.Debug.Printf("Updated Power for %s", hkLight.accessory.Info.Name.GetValue())
 				hkLight.accessory.Lightbulb.On.SetValue(event.(common.EventUpdatePower).Power)
 			case common.EventUpdateColor:
-				log.Debug.Printf("Updated Color for %s", hkLight.accessory.Info.Name.GetValue())
+				log.Debug.Printf("Update Color for %s to %v", hkLight.accessory.Info.Name.GetValue(), event.(common.EventUpdateColor).Color)
+
 				/*
 					hue, saturation, brightness := ConvertLIFXColor(event.(common.EventUpdateColor).Color)
 
@@ -145,6 +146,7 @@ func NewHKLight(light common.Light) *HKLight {
 	info := accessory.Info{
 		Name:         label,
 		Manufacturer: "LIFX",
+		Model:        "LIFX Bulb",
 	}
 
 	acc := accessory.NewLightbulb(info)
@@ -182,8 +184,6 @@ func NewHKLight(light common.Light) *HKLight {
 	})
 
 	updateColor := func(light common.Light) {
-		currentPower, _ := light.GetPower()
-
 		// HAP: [0...360]
 		// LIFX: [0...MAX_UINT16]
 		hue := acc.Lightbulb.Hue.GetValue()
@@ -211,14 +211,6 @@ func NewHKLight(light common.Light) *HKLight {
 		}
 
 		light.SetColor(color, transitionDuration)
-
-		if brightness > 0 && !currentPower {
-			log.Debug.Printf("Color changed for %s, turning on power.", label)
-			light.SetPowerDuration(true, transitionDuration)
-		} else if brightness == 0 && currentPower {
-			log.Debug.Printf("Color changed for %s, but brightness = 0 turning off power.", label)
-			light.SetPower(false)
-		}
 	}
 
 	acc.Lightbulb.Hue.OnValueRemoteUpdate(func(value float64) {

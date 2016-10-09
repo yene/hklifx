@@ -15,6 +15,9 @@ go get -u github.com/pdf/golifx/cmd/lifx
 
 The `lifx` command will be available at `${GOPATH}/bin/lifx`
 
+# Notes
+* updateColor gets called multiple times if a user changes the color in Home. The lamp will flicker a bit. I think the updates should be grouped, and only the last one should be sent.
+
 # golifx
 --
     import "github.com/pdf/golifx"
