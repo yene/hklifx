@@ -259,7 +259,7 @@ func ToggleLight(light common.Light) {
 func main() {
 	lights = map[uint64]*HKLight{}
 
-	pinArg := flag.String("pin", "001002003", "PIN used to pair the LIFX bulbs with HomeKit")
+	pinArg := flag.String("pin", "00102003", "PIN used to pair the LIFX bulbs with HomeKit")
 	verboseArg := flag.Bool("v", false, "Whether or not log output is displayed")
 	transitionArg := flag.Float64("transition-duration", 1, "Transition time in seconds")
 
