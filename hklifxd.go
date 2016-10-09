@@ -261,7 +261,7 @@ func main() {
 
 	pinArg := flag.String("pin", "00102003", "PIN used to pair the LIFX bulbs with HomeKit")
 	verboseArg := flag.Bool("v", false, "Whether or not log output is displayed")
-	transitionArg := flag.Float64("transition-duration", 1, "Transition time in seconds")
+	transitionArg := flag.Float64("transition-duration", 0, "Transition time in seconds")
 
 	flag.Parse()
 
