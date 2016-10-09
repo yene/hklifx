@@ -167,11 +167,9 @@ func NewHKLight(light common.Light) *HKLight {
 	}()
 
 	acc.OnIdentify(func() {
-		timeout := 1 * time.Second
-
 		for i := 0; i < 4; i++ {
 			ToggleLight(light)
-			time.Sleep(timeout)
+			time.Sleep(1 * time.Second)
 		}
 	})
 
