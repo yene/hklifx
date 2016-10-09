@@ -94,16 +94,18 @@ func NewDevice(device common.Device) {
 				// TODO Add support for label changes to HomeControl
 				log.Debug.Printf("Unsupported by HomeControl")
 			case common.EventUpdatePower:
+				// Note: power updates are sometimes very delayed.
 				log.Debug.Printf("Updated Power for %s", hkLight.accessory.Info.Name.GetValue())
 				hkLight.accessory.Lightbulb.On.SetValue(event.(common.EventUpdatePower).Power)
 			case common.EventUpdateColor:
 				log.Debug.Printf("Updated Color for %s", hkLight.accessory.Info.Name.GetValue())
+				/*
+					hue, saturation, brightness := ConvertLIFXColor(event.(common.EventUpdateColor).Color)
 
-				hue, saturation, brightness := ConvertLIFXColor(event.(common.EventUpdateColor).Color)
-
-				hkLight.accessory.Lightbulb.Hue.SetValue(hue)
-				hkLight.accessory.Lightbulb.Saturation.SetValue(saturation)
-				hkLight.accessory.Lightbulb.Brightness.SetValue(int(brightness))
+					hkLight.accessory.Lightbulb.Hue.SetValue(hue)
+					hkLight.accessory.Lightbulb.Saturation.SetValue(saturation)
+					hkLight.accessory.Lightbulb.Brightness.SetValue(int(brightness))
+				*/
 			case shared.EventBroadcastSent:
 				// Suppress event
 
